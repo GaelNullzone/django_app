@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Employee List</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --background: #f5f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #5e6a7d;
+            --border: #d8deea;
+            --accent: #1769aa;
+            --accent-dark: #0f4f82;
+            --danger: #a83232;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        main {
+            width: min(860px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 48px 0;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        p {
+            margin: 0 0 24px;
+            color: var(--muted);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(260px, 320px) 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        input,
+        select {
+            width: 100%;
+            min-height: 42px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 9px 10px;
+            font: inherit;
+            color: var(--text);
+            background: #ffffff;
+        }
+
+        button {
+            width: 100%;
+            min-height: 42px;
+            border: 0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font: inherit;
+            font-weight: 700;
+            color: #ffffff;
+            background: var(--accent);
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--accent-dark);
+        }
+
+        .error {
+            margin: 0 0 16px;
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        li:last-child {
+            border-bottom: 0;
+        }
+
+        .empty {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .gender {
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 720px) {
+            main {
+                padding: 32px 0;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Employee List</h1>
+        <p>Add an employee by name and gender.</p>
+
+        <section class="layout" aria-label="Employee manager">
+            <form class="panel" method="post">
+                {% csrf_token %}
+
+                {% if error %}
+                    <p class="error">{{ error }}</p>
+                {% endif %}
+
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" autocomplete="name" required>
+
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender" required>
+                    <option value="" selected disabled>Select gender</option>
+                    {% for gender in gender_choices %}
+                        <option value="{{ gender }}">{{ gender }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Add employee</button>
+            </form>
+
+            <div class="panel">
+                {% if employees %}
+                    <ul aria-label="Employees">
+                        {% for employee in employees %}
+                            <li>
+                                <strong>{{ employee.name }}</strong>
+                                <span class="gender">{{ employee.gender }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="empty">No employees added yet.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>
